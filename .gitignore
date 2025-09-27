@@ -1,0 +1,24 @@
+# CakePHP specific files
+/config/app_local.php
+/logs/*
+/tmp/*
+/vendor/*
+/.env
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node modules (if any)
+node_modules/
