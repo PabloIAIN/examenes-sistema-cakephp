@@ -64,4 +64,28 @@ class PagesController extends AppController
 
         $this->set(compact('user'));
     }
+
+    public function setupDatabase()
+    {
+        $this->autoRender = false;
+        
+        try {
+            $this->loadPlugin('Migrations');
+            $migrations = new \Migrations\Migrations();
+            
+            echo "Running migrations...<br>";
+            $migrations->migrate();
+            echo "Migrations completed<br>";
+            
+            echo "Running seeds...<br>";
+            $migrations->seed();
+            echo "Seeds completed<br>";
+            
+            echo "<h2>Database setup successful!</h2>";
+            echo "<a href='/users/login'>Go to Login</a>";
+            
+        } catch (\Exception $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    }
 }
