@@ -65,27 +65,41 @@ class PagesController extends AppController
         $this->set(compact('user'));
     }
 
-    public function setupDatabase()
+   public function setupDatabase()
     {
         $this->autoRender = false;
         
         try {
-            $this->loadPlugin('Migrations');
-            $migrations = new \Migrations\Migrations();
+            // Verificar conexión a base de datos
+            $connection = \Cake\Datasource\ConnectionManager::get('default');
+            $connection->connect();
+            echo "Database connection successful<br>";
             
+            // Intentar cargar plugin Migrations
+            if (!$this->plugins()->has('Migrations')) {
+                $this->loadPlugin('Migrations');
+            }
+            echo "Migrations plugin loaded<br>";
+            
+            // Ejecutar migrations
+            $migrations = new \Migrations\Migrations();
             echo "Running migrations...<br>";
             $migrations->migrate();
-            echo "Migrations completed<br>";
+            echo "Migrations completed successfully<br>";
             
+            // Ejecutar seeds
             echo "Running seeds...<br>";
             $migrations->seed();
-            echo "Seeds completed<br>";
+            echo "Seeds completed successfully<br>";
             
-            echo "<h2>Database setup successful!</h2>";
+            echo "<h2>Database setup completed!</h2>";
             echo "<a href='/users/login'>Go to Login</a>";
             
         } catch (\Exception $e) {
-            echo "Error: " . $e->getMessage();
+            echo "<h2>Error occurred:</h2>";
+            echo "<p>" . $e->getMessage() . "</p>";
+            echo "<p>File: " . $e->getFile() . "</p>";
+            echo "<p>Line: " . $e->getLine() . "</p>";
         }
     }
 }
