@@ -35,17 +35,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
                 'Table',
                 (new TableLocator())->allowFallbackClass(false)
             );
-            
-            // Ejecutar migrations automáticamente en producción
-            try {
-                $this->addPlugin('Migrations');
-                $migrations = new \Migrations\Migrations();
-                $migrations->migrate();
-                $migrations->seed();
-            } catch (\Exception $e) {
-                // Log error but continue
-                error_log('Migration error: ' . $e->getMessage());
-            }
         }
 
         // Cargar plugin de Authentication
