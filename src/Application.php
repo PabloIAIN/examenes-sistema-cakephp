@@ -39,11 +39,6 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
 
         // Cargar plugin de Authentication
         $this->addPlugin('Authentication');
-
-        // Cargar DebugKit solo en modo desarrollo
-        if (Configure::read('debug')) {
-            $this->addPlugin('DebugKit');
-        }
     }
 
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
@@ -64,7 +59,7 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
         return $middlewareQueue;
     }
 
-    // Implementar método de Authentication (VERSIÓN ACTUALIZADA SIN DEPRECATIONS)
+    // Implementar método de Authentication
     public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface
     {
         $authenticationService = new AuthenticationService([
@@ -72,26 +67,22 @@ class Application extends BaseApplication implements AuthenticationServiceProvid
             'queryParam' => 'redirect',
         ]);
 
-        // CAMBIO IMPORTANTE: Ya no usar loadIdentifier() por separado
-        // Ahora se configura el identifier directamente en el authenticator
+        // Cargar identificadores
+        $authenticationService->loadIdentifier('Authentication.Password', [
+            'fields' => [
+                'username' => 'email',
+                'password' => 'password',
+            ]
+        ]);
 
-        // Cargar authenticators con la configuración del identifier incluida
+        // Cargar authenticators
         $authenticationService->loadAuthenticator('Authentication.Session');
-        
         $authenticationService->loadAuthenticator('Authentication.Form', [
             'fields' => [
                 'username' => 'email',
                 'password' => 'password',
             ],
             'loginUrl' => '/users/login',
-            // Nueva forma: configurar el identifier aquí directamente
-            'identifier' => [
-                'className' => 'Authentication.Password',
-                'fields' => [
-                    'username' => 'email',
-                    'password' => 'password',
-                ],
-            ],
         ]);
 
         return $authenticationService;
